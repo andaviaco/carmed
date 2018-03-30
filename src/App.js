@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { Segment, Container } from 'semantic-ui-react';
 
-import { Hero } from './components/layout';
+import { Hero, Menu } from './components/layout';
 import MedicalCard from './components/MedicalCard';
 import KeyForm from './components/KeyForm';
 
@@ -72,15 +73,24 @@ class App extends Component {
   render() {
     return (
       <main>
-        <Hero />
+        <Segment
+          inverted
+          color='teal'
+          textAlign='center'
+          style={{ minHeight: 500, padding: '1em 0em' }}
+          vertical
+        >
+          <Menu />
+          <Hero />
+        </Segment>
 
-        <section className="section container">
-          <KeyForm />
-        </section>
+        <KeyForm />
 
-        <section className="section container">
-          <MedicalCard />
-        </section>
+        <Segment vertical>
+          <Container>
+            <MedicalCard />
+          </Container>
+        </Segment>
       </main>
     );
   }

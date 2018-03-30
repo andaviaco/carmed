@@ -1,47 +1,40 @@
 import React from 'react';
-
+import {
+  Button,
+  Container,
+  Header,
+  Icon,
+} from 'semantic-ui-react'
 
 function Hero() {
   return (
-    <section className="hero is-primary is-medium">
-      <div className="hero-head">
-        <nav className="navbar">
-          <div className="container">
-            <div className="navbar-brand">
-              <a className="navbar-item">
-                CARMED
-              </a>
-              <span className="navbar-burger burger">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </div>
-            <div className="navbar-menu">
-              <div className="navbar-end">
-                <a className="navbar-item is-active">
-                  Home
-                </a>
-                <a className="navbar-item">
-                  About
-                </a>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
-
-      <div className="hero-body">
-        <div className="container has-text-centered">
-          <h1 className="title">
-            Cartilla Médica
-          </h1>
-          <h2 className="subtitle">
-            Tu cartilla médica distribuida
-          </h2>
-        </div>
-      </div>
-    </section>
+    <Container text>
+      <Header
+        as='h1'
+        content='CARMED'
+        inverted
+        style={{
+          fontSize: '4em',
+          fontWeight: 'normal',
+          marginBottom: 0,
+          marginTop: '3em',
+        }}
+      />
+      <Header
+        as='h2'
+        content='Tu Cartilla Médica distribuída.'
+        inverted
+        style={{
+          fontSize: '1.7em',
+          fontWeight: 'normal',
+          marginTop: '1.5em',
+        }}
+      />
+      <Button primary size='huge'>
+        Crear Cartilla Médica
+        <Icon name='right plus' />
+      </Button>
+    </Container>
   );
 }
 

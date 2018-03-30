@@ -1,151 +1,83 @@
 import React, { Component } from 'react';
+import {
+  Card,
+  List,
+  Header,
+  Button,
+  Label,
+} from 'semantic-ui-react';
 
 class MedicalCard extends Component {
   render() {
     return (
-      <div className="tile box">
-        <div className="content container">
+      <Card fluid>
+        <Card.Content>
+          <Card.Header>
+            <Header as='h2'>Juan Perez Rodriguez</Header>
+          </Card.Header>
 
-          <h2 className="title is-2">Juan Perez Rodriguez</h2>
-          <h3 className="subtitle is-6">Ultima modificación: <em>05/Febrero/2018</em></h3>
+          <Card.Meta>Ultima modificación: <em>05/Febrero/2018</em></Card.Meta>
 
-          <div className="is-pulled-right">
-            <div className="buttons has-addons">
-              <button className="button">
-                <span className="icon">
-                  <i className="fas fa-print"></i>
-                </span>
-              </button>
-            </div>
-          </div>
+          <Card.Description>
+            <Label color='green' ribbon>Información Básica</Label>
 
-          <table className="table is-hoverable">
-            <tbody>
-              <tr>
-                <th className="has-text-centered" colSpan="3">
-                  Información Básica
-                </th>
-              </tr>
+            <List celled size="large">
+              <List.Item>
+                <List.Header>Edad</List.Header>
+                46
+              </List.Item>
+              <List.Item>
+                <List.Header>Sexo</List.Header>
+                Masculino
+              </List.Item>
+              <List.Item>
+                <List.Header>
+                  Peso <Button basic compact size="mini" icon='edit' />
+                </List.Header>
+                76 kg
+              </List.Item>
+              <List.Item>
+                <List.Header>
+                  Estatura <Button basic compact size="mini" icon='edit' />
+                </List.Header>
+                <span>179 cm</span>
+              </List.Item>
+            </List>
 
-              <tr>
-                <th className="has-text-right">
-                  Edad
-                </th>
-                <td>
-                  46
-                </td>
-                <td></td>
-              </tr>
+            <Label color='blue' ribbon>Información Médica</Label>
 
-              <tr>
-                <th className="has-text-right">
-                  Sexo
-                </th>
-                <td>
-                  Masculino
-                </td>
-                <td></td>
-              </tr>
-
-              <tr>
-                <th className="has-text-right">
-                  Peso
-                </th>
-                <td>
-                  76 kg
-                </td>
-                <td>
-                  <button className="button is-small">
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
-                    </span>
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="has-text-right">
-                  Estatura
-                </th>
-                <td>
-                  179 cm
-                </td>
-                <td>
-                  <button className="button is-small">
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
-                    </span>
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="has-text-centered" colSpan="3">
-                  Información Médica
-                </th>
-              </tr>
-
-              <tr>
-                <th className="has-text-right">
-                  Alergias
-                </th>
-                <td>
-                  <ul>
-                    <li>Penicilina</li>
-                    <li>Sulfamidas</li>
-                  </ul>
-                </td>
-                <td>
-                  <button className="button is-small">
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
-                    </span>
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="has-text-right">
-                  Padecimientos
-                </th>
-                <td>
-                  <ul>
-                    <li>Miopía</li>
-                    <li>Diabetes</li>
-                  </ul>
-                </td>
-                <td>
-                  <button className="button is-small">
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
-                    </span>
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <th className="has-text-right">
-                  Cirugías
-                </th>
-                <td>
-                  <ul>
-                    <li>Arstrocopia de rodilla</li>
-                    <li>Extirpación de apendice</li>
-                  </ul>
-                </td>
-                <td>
-                  <button className="button is-small">
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
-                    </span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-        </div>
-      </div>
+            <List celled size="large">
+              <List.Item>
+                <List.Header>
+                  Alergias <Button basic compact size="mini" icon='edit' />
+                </List.Header>
+                <ul>
+                  <li>Penicilina</li>
+                  <li>Sulfamidas</li>
+                </ul>
+              </List.Item>
+              <List.Item>
+                <List.Header>
+                  Padecimientos <Button basic compact size="mini" icon='edit' />
+                </List.Header>
+                <ul>
+                  <li>Miopía</li>
+                  <li>Diabetes</li>
+                </ul>
+              </List.Item>
+              <List.Item>
+                <List.Header>
+                  Cirugías <Button basic compact size="mini" icon='edit' />
+                </List.Header>
+                <ul>
+                  <li>Arstrocopia de rodilla</li>
+                  <li>Extirpación de apendice</li>
+                </ul>
+              </List.Item>
+            </List>
+          </Card.Description>
+        </Card.Content>
+      </Card>
     );
   }
 }
