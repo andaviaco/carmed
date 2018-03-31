@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { Segment, Container } from 'semantic-ui-react';
+import { Segment, Container, Button, Icon, } from 'semantic-ui-react';
 
-import { Hero, Menu } from './components/layout';
+import {
+  Hero,  Menu } from './components/layout';
 import MedicalCard from './components/MedicalCard';
 import KeyForm from './components/KeyForm';
+import PatientFormModal from './components/PatientFormModal';
 
 
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json';
@@ -16,7 +18,8 @@ class App extends Component {
 
     this.state = {
       storageValue: 0,
-      web3: null
+      web3: null,
+      modalIsOpen: false,
     }
   }
 
@@ -70,7 +73,21 @@ class App extends Component {
     })
   }
 
+  handleCardFormSubmit = (data) => {
+    console.log(data);
+    this.closeFormModal();
+  }
+
+  openFormModal = () => {
+    this.setState({ modalIsOpen: true });
+  }
+
+  closeFormModal = () => {
+    this.setState({ modalIsOpen: false });
+  }
+
   render() {
+    const { modalIsOpen } = this.state;
     return (
       <main>
         <Segment
@@ -81,7 +98,12 @@ class App extends Component {
           vertical
         >
           <Menu />
-          <Hero />
+          <Hero>
+            <Button primary size='huge' onClick={this.openFormModal}>
+              Crear Cartilla Médica
+              <Icon name='right plus' />
+            </Button>
+          </Hero>
         </Segment>
 
         <KeyForm />
@@ -91,6 +113,12 @@ class App extends Component {
             <MedicalCard />
           </Container>
         </Segment>
+
+        <PatientFormModal
+          open={modalIsOpen}
+          onClose={this.closeFormModal}
+          onSubmit={this.handleCardFormSubmit}
+        />
       </main>
     );
   }

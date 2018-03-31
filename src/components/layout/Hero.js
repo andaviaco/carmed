@@ -6,7 +6,9 @@ import {
   Icon,
 } from 'semantic-ui-react'
 
-function Hero() {
+import PatientFormModal from '../PatientFormModal';
+
+function Hero({ children }) {
   return (
     <Container text>
       <Header
@@ -30,10 +32,9 @@ function Hero() {
           marginTop: '1.5em',
         }}
       />
-      <Button primary size='huge'>
-        Crear Cartilla Médica
-        <Icon name='right plus' />
-      </Button>
+
+      { children }
+
     </Container>
   );
 }
