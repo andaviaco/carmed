@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Container, Button, Icon, } from 'semantic-ui-react';
+import { Segment, Container, Button } from 'semantic-ui-react';
 
 import {
   Hero,  Menu } from './components/layout';
@@ -7,8 +7,8 @@ import MedicalCard from './components/MedicalCard';
 import KeyForm from './components/KeyForm';
 import PatientFormModal from './components/PatientFormModal';
 
-
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json';
+import MedicalCardFactoryContract from '../build/contracts/MedicalCardFactory.json';
+import HealthContract from '../build/contracts/Health.json';
 import getWeb3 from './utils/getWeb3';
 
 
@@ -17,24 +17,22 @@ class App extends Component {
     super(props)
 
     this.state = {
-      storageValue: 0,
       web3: null,
       modalIsOpen: false,
+      account: null,
+      medicalCardFactory: null,
+      medicalCardContract: null,
     }
   }
 
   componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
-
     getWeb3
     .then(results => {
       this.setState({
         web3: results.web3
-      })
-
-      // Instantiate contract once web3 provided.
-      // this.instantiateContract()
+      }, () => {
+        this.instantiateContract()
+      });
     })
     .catch(() => {
       console.log('Error finding web3.')
@@ -43,38 +41,67 @@ class App extends Component {
 
   instantiateContract() {
     /*
-     * SMART CONTRACT EXAMPLE
-     *
      * Normally these functions would be called in the context of a
      * state management library, but for convenience I've placed them here.
      */
+    const contract = require('truffle-contract');
+    const medicalCardFactory = contract(MedicalCardFactoryContract);
+    const medicalCard = contract(HealthContract);
 
-    const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    simpleStorage.setProvider(this.state.web3.currentProvider)
+    medicalCardFactory.setProvider(this.state.web3.currentProvider);
+    medicalCard.setProvider(this.state.web3.currentProvider);
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
+    this.state.web3.eth.getAccounts(async (error, accounts) => {
+      const instance = await medicalCardFactory.deployed();
 
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance
-
-        // Stores a given value, 5 by default.
-        return simpleStorageInstance.set(5, {from: accounts[0]})
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
-      })
+      console.log('ACCOUNT', accounts[0]);
+      return this.setState({
+        medicalCardFactory: instance,
+        account: accounts[0],
+        medicalCardContract: medicalCard,
+      });
     })
   }
 
+  async createMedicalCard(data) {
+    const { medicalCardFactory, account } = this.state;
+
+    const contractAddress = await medicalCardFactory.createCard(
+      data.name,
+      data.gender,
+      data.weight,
+      123,
+      { from: account },
+    );
+
+  }
+
+  async getCardContract(publicKey) {
+    const { medicalCardFactory, account } = this.state;
+
+    try {
+      const contractAddress = await medicalCardFactory.getCardAddress.call(publicKey);
+
+      return contractAddress;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async getCardContractInstance(contractAddress) {
+    const { medicalCardContract } = this.state;
+
+    return await medicalCardContract.at(contractAddress);
+  }
+
+  async loadContractData(instance) {
+    const { account } = this.state;
+    const name = await instance.getName.call();
+    this.setState({ cardName: name })
+  }
+
   handleCardFormSubmit = (data) => {
-    console.log(data);
+    this.createMedicalCard(data);
     this.closeFormModal();
   }
 
@@ -86,8 +113,21 @@ class App extends Component {
     this.setState({ modalIsOpen: false });
   }
 
+  searchCard = async ({ publicKey, privateKey }) => {
+    try {
+      const constractAddress = await this.getCardContract(publicKey);
+      const instance = await this.getCardContractInstance(constractAddress);
+
+      this.loadContractData(instance);
+
+    } catch (e) {
+      console.error(e);
+    }
+
+  }
+
   render() {
-    const { modalIsOpen } = this.state;
+    const { modalIsOpen, cardName } = this.state;
     return (
       <main>
         <Segment
@@ -99,20 +139,26 @@ class App extends Component {
         >
           <Menu />
           <Hero>
-            <Button primary size='huge' onClick={this.openFormModal}>
-              Crear Cartilla Médica
-              <Icon name='right plus' />
-            </Button>
+            <Button
+              primary
+              size='huge'
+              icon="plus"
+              content="Crear Cartilla Médica"
+              labelPosition='right'
+              onClick={this.openFormModal}
+            />
           </Hero>
         </Segment>
 
-        <KeyForm />
+        <KeyForm onSubmit={this.searchCard}/>
 
-        <Segment vertical>
-          <Container>
-            <MedicalCard />
-          </Container>
-        </Segment>
+        {cardName && (
+          <Segment vertical>
+            <Container>
+              <MedicalCard name={cardName}/>
+            </Container>
+          </Segment>
+        )}
 
         <PatientFormModal
           open={modalIsOpen}

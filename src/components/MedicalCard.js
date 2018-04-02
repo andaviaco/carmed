@@ -9,11 +9,13 @@ import {
 
 class MedicalCard extends Component {
   render() {
+    const {name} = this.props;
+
     return (
       <Card fluid>
         <Card.Content>
           <Card.Header>
-            <Header as='h2'>Juan Perez Rodriguez</Header>
+            <Header as='h2'>{name}</Header>
           </Card.Header>
 
           <Card.Meta>Ultima modificación: <em>05/Febrero/2018</em></Card.Meta>
