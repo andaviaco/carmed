@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Segment, Container, Button, Grid, Form, Sticky } from 'semantic-ui-react';
+import { ToastContainer, toast } from 'react-toastify';
 
 import { Hero,  Menu } from './components/layout';
 import MedicalCard from './components/MedicalCard';
@@ -13,6 +14,11 @@ import getWeb3 from './utils/getWeb3';
 import { ATTR_LANG_MAP } from './const';
 
 
+const contractSetterMap = {
+  height: 'changeHeight',
+  weight: 'changeWeight',
+};
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -23,6 +29,9 @@ class App extends Component {
       account: null,
       medicalCardFactory: null,
       medicalCardContract: null,
+      currentCardInstance: null,
+      publicKey: '',
+      privateKey: '',
       cardData: {
         name: '',
         gender: '',
@@ -101,10 +110,14 @@ class App extends Component {
     }
   }
 
-  async getCardContractInstance(contractAddress) {
+  async setCardContractInstance(contractAddress) {
     const { medicalCardContract } = this.state;
 
-    return await medicalCardContract.at(contractAddress);
+    const instance = await medicalCardContract.at(contractAddress);
+    console.log('INSTANCE', instance);
+    this.setState({ currentCardInstance: instance });
+
+    return instance;
   }
 
   async loadContractData(instance) {
@@ -123,41 +136,24 @@ class App extends Component {
     })
   }
 
-  handleCardFormSubmit = (data) => {
-    this.createMedicalCard(data);
-    this.closeFormModal();
-  }
+  async persistContractUpdate(fieldName, value) {
+    const { currentCardInstance, privateKey, account } = this.state;
+    const setter = contractSetterMap[fieldName];
 
-  openFormModal = () => {
-    this.setState({ modalIsOpen: true });
-  }
-
-  closeFormModal = () => {
-    this.setState({ modalIsOpen: false });
-  }
-
-  searchCard = async ({ publicKey, privateKey }) => {
     try {
-      const constractAddress = await this.getCardContract(publicKey);
-      const instance = await this.getCardContractInstance(constractAddress);
-
-      this.loadContractData(instance);
-
-    } catch (e) {
-      console.error(e);
+      // estimate gas cost to know if the transaction will not fail (pass the requirement)
+      await currentCardInstance[setter].estimateGas(privateKey, value, { from: account });
+    } catch(e) {
+      return Promise.reject('La llave privada es inválida.');
     }
+
+    // send transaction
+    return await currentCardInstance[setter](privateKey, value, { from: account });
   }
 
-  editField = (fieldName) => {
-    this.setState({
-      editFieldName: fieldName,
-      editFieldTitle: ATTR_LANG_MAP[fieldName].toUpperCase(),
-      editValue: this.state.cardData[fieldName],
-      editViewIsOpen: true,
-    });
-  }
+  saveEditField = async (fieldName) => {
+    const oldState = this.state;
 
-  saveEditField = (fieldName) => {
     this.setState((state) => ({
       editViewIsOpen: false,
       cardData: {
@@ -165,6 +161,55 @@ class App extends Component {
         [fieldName]: state.editValue,
       },
     }));
+
+    try {
+      await this.persistContractUpdate(fieldName, this.state.editValue);
+    } catch (e) {
+      toast.error(e, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+      // naive optimistic rendering
+      this.setState(oldState);
+    }
+  }
+
+  handleCardFormSubmit = (data) => {
+    this.createMedicalCard(data);
+    this.handleCloseModal();
+  }
+
+  handleOpenModal = () => {
+    this.setState({ modalIsOpen: true });
+  }
+
+  handleCloseModal = () => {
+    this.setState({ modalIsOpen: false });
+  }
+
+  handlePrivateKeyChange = (privateKey) => {
+    this.setState({ privateKey });
+  }
+
+  handleSearchCard = async ({ publicKey, privateKey }) => {
+    this.setState({ publicKey, privateKey });
+
+    try {
+      const constractAddress = await this.getCardContract(publicKey);
+      const instance = await this.setCardContractInstance(constractAddress);
+
+      this.loadContractData(instance);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  handleEditField = (fieldName) => {
+    this.setState({
+      editFieldName: fieldName,
+      editFieldTitle: ATTR_LANG_MAP[fieldName].toUpperCase(),
+      editValue: this.state.cardData[fieldName],
+      editViewIsOpen: true,
+    });
   }
 
   handleEditChange = ({ target }) => {
@@ -201,12 +246,14 @@ class App extends Component {
               icon="plus"
               content="Crear Cartilla Médica"
               labelPosition='right'
-              onClick={this.openFormModal}
+              onClick={this.handleOpenModal}
             />
           </Hero>
         </Segment>
 
-        <KeyForm onSubmit={this.searchCard}/>
+        <KeyForm
+          onPrivateKeyChange={this.handlePrivateKeyChange}
+          onSubmit={this.handleSearchCard}/>
 
           <Segment vertical>
             <Container>
@@ -217,7 +264,7 @@ class App extends Component {
                       <MedicalCard
                         {...cardData}
                         gender={ATTR_LANG_MAP[cardData.gender]}
-                        onEdit={this.editField}
+                        onEdit={this.handleEditField}
                       />
                     </Grid.Column>
                   )}
@@ -227,7 +274,11 @@ class App extends Component {
                           <Form onSubmit={this.saveEditField.bind(this, editFieldName)}>
                             <Form.Field>
                               <label>Cambiar {editFieldTitle}</label>
-                              <input placeholder={editFieldTitle} name="kaka" value={editValue} onChange={this.handleEditChange}/>
+                              <input
+                                placeholder={editFieldTitle}
+                                value={editValue}
+                                onChange={this.handleEditChange}
+                              />
                             </Form.Field>
                             <Form.Button color="blue">Guardar</Form.Button>
                           </Form>
@@ -241,9 +292,11 @@ class App extends Component {
 
         <PatientFormModal
           open={modalIsOpen}
-          onClose={this.closeFormModal}
+          onClose={this.handleCloseModal}
           onSubmit={this.handleCardFormSubmit}
         />
+
+        <ToastContainer />
       </main>
     );
   }

@@ -22,6 +22,11 @@ class KeyForm extends Component {
     this.props.onSubmit({ publicKey, privateKey });
   }
 
+  handlePrivateKeyChange = ({ target }) => {
+    this.setState({ privateKey: target.value });
+    this.props.onPrivateKeyChange(target.value);
+  }
+
   render() {
     const { publicKey, privateKey } = this.state;
 
@@ -48,7 +53,7 @@ class KeyForm extends Component {
                   placeholder='***********'
                   name="privateKey"
                   value={privateKey}
-                  onChange={this.handleChange}
+                  onChange={this.handlePrivateKeyChange}
                 />
               </Grid.Column>
             </Grid.Row>

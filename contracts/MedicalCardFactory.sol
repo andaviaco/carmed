@@ -10,14 +10,14 @@ contract MedicalCardFactory {
       string _gender,
       uint8 _height,
       uint8 _weight,
-      uint _newPublicPass
+      uint _privatedPass
     ) public {
         address newContract = new Health(
           _name,
           _gender,
           _height,
           _weight,
-          _newPublicPass
+          _privatedPass
         );
         cards[msg.sender] = newContract;
     }

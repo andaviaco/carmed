@@ -32,6 +32,11 @@ contract Health {
       weight = _weight;
     }
 
+    function changeHeight(uint _privatedPass, uint8 _height) public {
+      require(privatedPass == _privatedPass);
+      height = _height;
+    }
+
     function addDisease(uint _privatedPass, string _diseases) public {
       require(privatedPass == _privatedPass);
       diseases = _diseases;
@@ -46,9 +51,5 @@ contract Health {
       require(msg.sender != owner);
 
       privatedPass = _newPublicPass;
-    }
-
-    function getName() public view returns (string) {
-      return name;
     }
 }
