@@ -66,9 +66,10 @@ class App extends Component {
   async createMedicalCard(data) {
     const { medicalCardFactory, account } = this.state;
 
-    const contractAddress = await medicalCardFactory.createCard(
+    await medicalCardFactory.createCard(
       data.name,
       data.gender,
+      data.height,
       data.weight,
       123,
       { from: account },

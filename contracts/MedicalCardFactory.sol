@@ -8,12 +8,14 @@ contract MedicalCardFactory {
     function createCard (
       string _name,
       string _gender,
-      uint _weight,
+      uint8 _height,
+      uint8 _weight,
       uint _newPublicPass
     ) public {
         address newContract = new Health(
           _name,
           _gender,
+          _height,
           _weight,
           _newPublicPass
         );

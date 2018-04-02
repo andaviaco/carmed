@@ -4,7 +4,8 @@ contract Health {
     address private owner;
     string public name;
     string public gender;
-    uint public weight;
+    uint8 public height;
+    uint8 public weight;
     string private diseases;
     string private medication;
     uint private privatedPass;
@@ -12,19 +13,21 @@ contract Health {
     function Health(
       string _name,
       string _gender,
-      uint _weight,
+      uint8 _height,
+      uint8 _weight,
       uint _privatedPass
     ) public {
       owner = msg.sender;
       name = _name;
       gender = _gender;
+      height = _height;
       weight = _weight;
       diseases = "";
       medication = "";
       privatedPass = _privatedPass;
     }
 
-    function changeWeight(uint _privatedPass, uint _weight) public {
+    function changeWeight(uint _privatedPass, uint8 _weight) public {
       require(privatedPass == _privatedPass);
       weight = _weight;
     }
