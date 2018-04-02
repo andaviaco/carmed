@@ -1,12 +1,9 @@
 import React from 'react';
 import {
-  Button,
   Container,
   Header,
-  Icon,
 } from 'semantic-ui-react'
 
-import PatientFormModal from '../PatientFormModal';
 
 function Hero({ children }) {
   return (

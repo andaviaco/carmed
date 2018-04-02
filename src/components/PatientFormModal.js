@@ -5,15 +5,11 @@ import {
   Form,
   Input,
 } from 'semantic-ui-react';
-import moment from 'moment';
-// import Calendar from 'rc-calendar';
 
 const genderOptions = [
   { key: 'm', text: 'Masculino', value: 'male' },
   { key: 'f', text: 'Femenino', value: 'female' },
 ]
-
-const today = moment();
 
 class PatientFormModal extends Component {
   state = {
@@ -59,7 +55,7 @@ class PatientFormModal extends Component {
                 onChange={this.handleChange}
               />
               <Form.Field>
-                <label>Peso</label>
+                <label>Estatura</label>
                 <Input
                   label={{ basic: true, content: 'cm' }}
                   labelPosition='right'
