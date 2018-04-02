@@ -30,7 +30,7 @@ class KeyForm extends Component {
         <Container>
           <Grid divided columns='equal' stackable>
             <Grid.Row textAlign='center'>
-              <Grid.Column style={{ paddingBottom: '5em', paddingTop: '5em' }}>
+              <Grid.Column style={{ paddingBottom: '2em', paddingTop: '2em' }}>
                 <Form.Input
                   fluid
                   label='Llave Pública'
@@ -40,7 +40,7 @@ class KeyForm extends Component {
                   onChange={this.handleChange}
                 />
               </Grid.Column>
-              <Grid.Column style={{ paddingBottom: '5em', paddingTop: '5em' }}>
+              <Grid.Column style={{ paddingBottom: '2em', paddingTop: '2em' }}>
                 <Form.Input
                   fluid
                   label='Llave Privada'

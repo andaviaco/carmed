@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Segment, Container, Button } from 'semantic-ui-react';
+import { Segment, Container, Button, Grid, Form, Sticky } from 'semantic-ui-react';
 
-import {
-  Hero,  Menu } from './components/layout';
+import { Hero,  Menu } from './components/layout';
 import MedicalCard from './components/MedicalCard';
 import KeyForm from './components/KeyForm';
 import PatientFormModal from './components/PatientFormModal';
@@ -10,6 +9,8 @@ import PatientFormModal from './components/PatientFormModal';
 import MedicalCardFactoryContract from '../build/contracts/MedicalCardFactory.json';
 import HealthContract from '../build/contracts/Health.json';
 import getWeb3 from './utils/getWeb3';
+
+import { ATTR_LANG_MAP } from './const';
 
 
 class App extends Component {
@@ -22,6 +23,17 @@ class App extends Component {
       account: null,
       medicalCardFactory: null,
       medicalCardContract: null,
+      cardData: {
+        name: '',
+        gender: '',
+        weight: '',
+        height: '',
+      },
+      editViewIsOpen: false,
+      editValue: '',
+      editFieldName: '',
+      editFieldTitle: '',
+      contextRef: null,
     }
   }
 
@@ -78,7 +90,7 @@ class App extends Component {
   }
 
   async getCardContract(publicKey) {
-    const { medicalCardFactory, account } = this.state;
+    const { medicalCardFactory } = this.state;
 
     try {
       const contractAddress = await medicalCardFactory.getCardAddress.call(publicKey);
@@ -96,9 +108,19 @@ class App extends Component {
   }
 
   async loadContractData(instance) {
-    const { account } = this.state;
-    const name = await instance.getName.call();
-    this.setState({ cardName: name })
+    const name = await instance.name.call();
+    const gender = await instance.gender.call();
+    const weight = (await instance.weight.call()).c[0];
+    const height = (await instance.height.call()).c[0];
+
+    this.setState({
+      cardData: {
+        name,
+        gender,
+        weight,
+        height,
+      },
+    })
   }
 
   handleCardFormSubmit = (data) => {
@@ -124,11 +146,44 @@ class App extends Component {
     } catch (e) {
       console.error(e);
     }
-
   }
 
+  editField = (fieldName) => {
+    this.setState({
+      editFieldName: fieldName,
+      editFieldTitle: ATTR_LANG_MAP[fieldName].toUpperCase(),
+      editValue: this.state.cardData[fieldName],
+      editViewIsOpen: true,
+    });
+  }
+
+  saveEditField = (fieldName) => {
+    this.setState((state) => ({
+      editViewIsOpen: false,
+      cardData: {
+        ...state.cardData,
+        [fieldName]: state.editValue,
+      },
+    }));
+  }
+
+  handleEditChange = ({ target }) => {
+    this.setState({ editValue: target.value });
+  }
+
+  handleContextRef = contextRef => this.setState({ contextRef });
+
   render() {
-    const { modalIsOpen, cardName } = this.state;
+    const {
+      modalIsOpen,
+      cardData,
+      editViewIsOpen,
+      editValue,
+      editFieldName,
+      editFieldTitle,
+      contextRef,
+    } = this.state;
+
     return (
       <main>
         <Segment
@@ -153,13 +208,36 @@ class App extends Component {
 
         <KeyForm onSubmit={this.searchCard}/>
 
-        {cardName && (
           <Segment vertical>
             <Container>
-              <MedicalCard name={cardName}/>
+              <div ref={this.handleContextRef}>
+                <Grid columns={editViewIsOpen? 2 : 1} divided>
+                  {cardData.name && (
+                    <Grid.Column width={editViewIsOpen? 12 : 16}>
+                      <MedicalCard
+                        {...cardData}
+                        gender={ATTR_LANG_MAP[cardData.gender]}
+                        onEdit={this.editField}
+                      />
+                    </Grid.Column>
+                  )}
+                  { editViewIsOpen &&
+                    <Grid.Column width={4}>
+                        <Sticky context={contextRef}>
+                          <Form onSubmit={this.saveEditField.bind(this, editFieldName)}>
+                            <Form.Field>
+                              <label>Cambiar {editFieldTitle}</label>
+                              <input placeholder={editFieldTitle} name="kaka" value={editValue} onChange={this.handleEditChange}/>
+                            </Form.Field>
+                            <Form.Button color="blue">Guardar</Form.Button>
+                          </Form>
+                        </Sticky>
+                    </Grid.Column>
+                  }
+                </Grid>
+              </div>
             </Container>
           </Segment>
-        )}
 
         <PatientFormModal
           open={modalIsOpen}
