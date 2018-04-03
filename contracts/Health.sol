@@ -8,7 +8,10 @@ contract Health {
     uint8 public weight;
     string private diseases;
     string private medication;
+    string private allergies;
+    string private surgeries;
     uint private privatedPass;
+    uint public lastModification;
 
     function Health(
       string _name,
@@ -24,7 +27,10 @@ contract Health {
       weight = _weight;
       diseases = "";
       medication = "";
+      allergies = "";
+      surgeries = "";
       privatedPass = _privatedPass;
+      lastModification = now;
     }
 
     function changeWeight(uint _privatedPass, uint8 _weight) public {
@@ -37,15 +43,42 @@ contract Health {
       height = _height;
     }
 
+    function addAllergies(uint _privatedPass, string _allergies) public {
+      require(privatedPass == _privatedPass);
+      allergies = _allergies;
+    }
+
     function addDisease(uint _privatedPass, string _diseases) public {
       require(privatedPass == _privatedPass);
       diseases = _diseases;
+    }
+
+    function addSurgeries(uint _privatedPass, string _surgeries) public {
+      require(privatedPass == _privatedPass);
+      surgeries = _surgeries;
     }
 
     function addMedication(uint _privatedPass, string _medication) public {
       require(privatedPass == _privatedPass);
       medication = _medication;
     }
+
+    function getAllergies() public view returns (string) {
+      return allergies;
+    }
+
+    function getDiseases() public view returns (string) {
+      return diseases;
+    }
+
+    function getMedication() public view returns (string) {
+      return medication;
+    }
+
+    function getSurgeries() public view returns (string) {
+      return surgeries;
+    }
+
 
     function changePublicPass(uint _newPublicPass) public {
       require(msg.sender != owner);
