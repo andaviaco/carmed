@@ -7,6 +7,7 @@ import {
 function Hero() {
   return (
     <Menu
+      inverted={true}
       pointing={true}
       secondary={true}
       size='large'

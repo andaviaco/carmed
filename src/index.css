@@ -8,6 +8,11 @@ Walkaround for a modal issue
 https://github.com/Semantic-Org/Semantic-UI-CSS/issues/40#issuecomment-372034323
 */
 .ui.active.dimmer.modals.transition {
-    display: flex !important;
-    display: -ms-flexbox !important;
+  display: flex !important;
+  display: -ms-flexbox !important;
+}
+
+/* customize inverted menu */
+.ui.secondary.inverted.pointing.menu {
+  border-color: transparent;
 }
