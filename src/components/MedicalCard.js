@@ -7,6 +7,24 @@ import {
   Label,
 } from 'semantic-ui-react';
 
+import moment from 'moment';
+
+import { listFormatter } from '../utils';
+
+function tsToDate(value) {
+  return moment.unix(value).format("DD/MM/YYYY");
+}
+
+function ListFormatter({ value }) {
+  return (
+    <ul>
+      {listFormatter(value).map((s, i) =>
+        <li key={i}>{s}</li>
+      )}
+    </ul>
+  );
+}
+
 function MedicalCard(props) {
   return (
     <Card fluid>
@@ -15,7 +33,7 @@ function MedicalCard(props) {
           <Header as='h2'>{props.name}</Header>
         </Card.Header>
 
-        <Card.Meta>Última modificación: <em>05/Febrero/2018</em></Card.Meta>
+        <Card.Meta>Última modificación: <em>{tsToDate(props.lastModification)}</em></Card.Meta>
 
         <Card.Description>
           <Label color='green' ribbon>Información Básica</Label>
@@ -48,31 +66,30 @@ function MedicalCard(props) {
           <List celled size="large">
             <List.Item>
               <List.Header>
-                Alergias <Button basic compact size="mini" icon='edit' />
+                Alergias <Button basic compact size="mini" icon='edit' onClick={props.onEdit.bind(null, 'allergies')} />
               </List.Header>
-              <ul>
-                <li>Penicilina</li>
-                <li>Sulfamidas</li>
-              </ul>
+              <ListFormatter value={props.allergies} />
             </List.Item>
             <List.Item>
               <List.Header>
-                Padecimientos <Button basic compact size="mini" icon='edit' />
+                Padecimientos <Button basic compact size="mini" icon='edit' onClick={props.onEdit.bind(null, 'diseases')} />
               </List.Header>
-              <ul>
-                <li>Miopía</li>
-                <li>Diabetes</li>
-              </ul>
+              <ListFormatter value={props.diseases} />
             </List.Item>
+
             <List.Item>
               <List.Header>
                 Cirugías <Button basic compact size="mini" icon='edit' />
               </List.Header>
               <ul>
                 <li>Arstrocopia de rodilla</li>
-                <li>Extirpación de apendice</li>
+                <li>Apendicectomía</li>
+                <li>Cirugía de cataratas</li>
               </ul>
             </List.Item>
+
+
+
           </List>
         </Card.Description>
       </Card.Content>
