@@ -6,7 +6,9 @@ export const ATTR_LANG_MAP = {
   gender: 'sexo',
   male: 'masculino',
   female: 'femenino',
-};
+  allergies: 'alergias',
+  diseases: 'padecimientos',
+}
 
 export default {
   ATTR_LANG_MAP,

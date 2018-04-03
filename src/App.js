@@ -17,6 +17,8 @@ import { ATTR_LANG_MAP } from './const';
 const contractSetterMap = {
   height: 'changeHeight',
   weight: 'changeWeight',
+  allergies: 'addAllergies',
+  diseases: 'addDisease',
 };
 
 class App extends Component {
@@ -37,6 +39,9 @@ class App extends Component {
         gender: '',
         weight: '',
         height: '',
+        allergies: '',
+        diseases: '',
+        lastModification: 0,
       },
       editViewIsOpen: false,
       editValue: '',
@@ -121,10 +126,21 @@ class App extends Component {
   }
 
   async loadContractData(instance) {
+    const { privateKey, account } = this.state;
+
     const name = await instance.name.call();
     const gender = await instance.gender.call();
     const weight = (await instance.weight.call()).c[0];
     const height = (await instance.height.call()).c[0];
+    const lastModification = (await instance.lastModification.call()).c[0];
+
+    let allergies = '';
+    let diseases = '';
+
+    if (privateKey) {
+      allergies = await instance.getAllergies();
+      diseases = await instance.getDiseases();
+    }
 
     this.setState({
       cardData: {
@@ -132,6 +148,9 @@ class App extends Component {
         gender,
         weight,
         height,
+        allergies,
+        diseases,
+        lastModification,
       },
     })
   }
