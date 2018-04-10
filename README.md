@@ -54,7 +54,7 @@ $ npm start
 ## Interfaz Web
 Se contruyó usando **Semantic-UI** y **ReactJS** como framework, consta de diversos componentes que interactuan en una _SPA_. Internamente usamos **web3** y truffle-contract para interactuar con nuestros contratos a través de un proveedor (ejemplo: MetaMask).
 
-[IMAGEN DE INTERFÁZ]
+![Header Screenshot](/../screenshots/header-screenshot.png?raw=true "Header Screenshot")
 
 El objetivo principal del diseño de la interfaz es ser una herramienta simple que cualquier persona pueda utilizar sin complicadas interacciones. Tambien pretendemos que sea un intefas incluyente que cumpla con los estandares HTML de inclusión.
 
@@ -75,8 +75,7 @@ Este contrato mantiene la información completa la cartilla médica y mantiene u
 ### MedicalCardFactory
 Permite la creación y el almacenamiento de contratos en el blockchain.
 
-[IMAGEN AQUÏ]
-
+![Card Screenshot](/../screenshots/card-screenshot.png?raw=true "Card Screenshot")
 
 <a name="deployment"/>
 ### Deployment
@@ -91,4 +90,4 @@ Los contratos son compilados y desplegados a la blockchain usando **Truffle**, s
 ## Interacción del sistema
 Nuestra aplicación interactúan directamente con la blockchain una vez desplegados los contratos.
 
-[IMAGEN AQUÏ]
+![System Diagram](/../screenshots/system-diagram.png?raw=true "System Diagram")
